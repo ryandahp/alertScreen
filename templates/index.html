@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screen Blinker</title>
+  <style>
+    body.blinking {
+      animation: blink 0.5s alternate infinite;
+    }
+    @keyframes blink {
+      from { background-color: white; }
+      to { background-color: red; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🔔 Waiting for Webhook...</h1>
+
+  <script>
+    const source = new EventSource("/events");
+    source.onmessage = function (event) {
+      if (event.data === "blink") {
+        document.body.classList.add("blinking");
+        setTimeout(() => {
+          document.body.classList.remove("blinking");
+        }, 3000);
+      }
+    };
+  </script>
+</body>
+</html>
