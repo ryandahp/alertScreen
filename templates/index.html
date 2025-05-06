@@ -4,33 +4,67 @@
   <meta charset="UTF-8">
   <title>Screen Blinker</title>
   <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+      transition: background-color 0.2s;
+    }
+
     body.blinking {
       animation: blink 0.5s alternate infinite;
     }
+
     @keyframes blink {
       from { background-color: white; }
       to { background-color: red; }
     }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin: 0;
+    }
+
+    p.timestamp {
+      font-size: 1rem;
+      margin-top: 10px;
+      color: #555;
+    }
   </style>
 </head>
 <body>
-  <h1>🔔 Waiting for Webhook...</h1>
+  <div class="container">
+    <h1>🔔 Waiting for Webhook...</h1>
+    <p class="timestamp"></p>
+  </div>
 
   <script>
-  const source = new EventSource("/events");
+    const source = new EventSource("/events");
 
-  source.onmessage = function (event) {
-    const alertName = event.data;
-    document.body.classList.add("blinking");
+    source.onmessage = function (event) {
+      const alertName = event.data || "Unknown Alert";
+      const h1 = document.querySelector("h1");
+      const timestamp = document.querySelector(".timestamp");
 
-    const h1 = document.querySelector("h1");
-    h1.textContent = `🚨 ALERT: ${alertName}`;
+      document.body.classList.add("blinking");
+      h1.textContent = `🚨 ALERT: ${alertName}`;
 
-    setTimeout(() => {
-      document.body.classList.remove("blinking");
-      h1.textContent = "🔔 Waiting for Webhook...";
-    }, 3000);
-  };
-</script>
+      const now = new Date();
+      timestamp.textContent = `Received at: ${now.toLocaleString()}`;
+
+      setTimeout(() => {
+        document.body.classList.remove("blinking");
+      }, 3000);
+    };
+  </script>
 </body>
 </html>
