@@ -4,32 +4,49 @@
   <meta charset="UTF-8">
   <title>Screen Blinker</title>
   <style>
-    body.blinking {
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background-color: white;
+    }
+
+    .blinking {
       animation: blink 0.5s alternate infinite;
     }
+
     @keyframes blink {
       from { background-color: white; }
       to { background-color: red; }
+    }
+
+    h1 {
+      font-size: 2rem;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <h1>🔔 Waiting for Webhook...</h1>
-
   <script>
     const source = new EventSource("/events");
-  
+
     source.onmessage = function (event) {
-      const alertName = event.data;
-      document.body.classList.add("blinking");
-  
+      const alertName = event.data || "Unknown Alert";
       const h1 = document.querySelector("h1");
-      h1.textContent = `🚨 ALERT: ${alertName}`;
-  
+
+      // Optional: indicate incoming
+      h1.textContent = "⏳ Alert incoming...";
+
+      // Delay before displaying alert
       setTimeout(() => {
-        document.body.classList.remove("blinking");
-        h1.textContent = "🔔 Waiting for Webhook...";
-      }, 3000);
+        document.body.classList.add("blinking");
+        h1.textContent = `🚨 ALERT: ${alertName}`;
+        // ❌ No reset — stays until the next webhook
+      }, 1000);
     };
   </script>
 </body>
