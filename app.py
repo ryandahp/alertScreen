@@ -33,8 +33,8 @@ def webhook():
     data = request.get_json()
     # alert_name = data.get("alert_name", "Unknown Alert")
     # Safely extract summary from nested structure
-    alert_name = data.get("payload", {}).get("incident", {}).get("summary", "Unknown Alert")
-    # alert_name = data
+    # alert_name = data.get("payload", {}).get("incident", {}).get("summary", "Unknown Alert")
+    alert_name = data
     for q in clients:
         q.put(alert_name)
     return "Webhook received", 200
