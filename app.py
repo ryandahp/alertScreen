@@ -30,8 +30,10 @@ def sse():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    data = request.get_json()
+    alert_name = data.get("alert_name", "Unknown Alert")
     for q in clients:
-        q.put("blink")
+        q.put(alert_name)
     return "Webhook received", 200
 
 if __name__ == '__main__':
