@@ -5,6 +5,8 @@ import threading
 app = Flask(__name__)
 clients = []
 
+#test
+
 def event_stream():
     while True:
         time.sleep(0.5)
