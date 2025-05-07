@@ -23,7 +23,7 @@ def events():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
-    summary = data.get("payload", {}).get("incident", {}).get("summary", "Unknown Alert")
+    summary = data.get("payload", {}).get("incident", {}).get("title", "Unknown Alert")
     for q in clients:
         q.put(summary)
     return "OK", 200
