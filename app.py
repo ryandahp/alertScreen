@@ -1,23 +1,15 @@
 from flask import Flask, render_template, Response, request
-import time
-import threading
+import queue
 
 app = Flask(__name__)
 clients = []
 
-#test
-
-def event_stream():
-    while True:
-        time.sleep(0.5)
-        yield f"data: \n\n"
-
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template("index.html")
 
 @app.route('/events')
-def sse():
+def events():
     def stream():
         q = queue.Queue()
         clients.append(q)
@@ -31,14 +23,10 @@ def sse():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
-    # alert_name = data.get("alert_name", "Unknown Alert")
-    # Safely extract summary from nested structure
-    alert_name = data.get("payload", {}).get("incident", {}).get("title", "Unknown Alert")
-    # alert_name = data
+    summary = data.get("payload", {}).get("incident", {}).get("summary", "Unknown Alert")
     for q in clients:
-        q.put(alert_name)
-    return "Webhook received", 200
+        q.put(summary)
+    return "OK", 200
 
 if __name__ == '__main__':
-    import queue
-    app.run(debug=True, threaded=True, host="0.0.0.0", port=5670)
+    app.run(host="0.0.0.0", port=10000)

@@ -2,68 +2,86 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Screen Blinker</title>
+  <title>Incoming Alerts</title>
   <style>
     html, body {
       height: 100%;
       margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #8B0000;
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: white;
-      transition: background-color 0.2s;
     }
 
-    body.blinking {
-      animation: blink 0.5s alternate infinite;
+    .alert-panel {
+      background-color: #600000;
+      border-radius: 16px;
+      padding: 30px 40px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      color: white;
     }
 
-    @keyframes blink {
-      from { background-color: white; }
-      to { background-color: red; }
-    }
-
-    .container {
+    .alert-panel h1 {
+      margin: 0 0 20px;
       text-align: center;
+      font-size: 2rem;
     }
 
-    h1 {
-      font-size: 2rem;
+    ul.alert-list {
+      list-style: none;
+      padding: 0;
       margin: 0;
     }
 
-    p.timestamp {
+    .alert-item {
+      background-color: #0F172A;
+      color: white;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 1rem;
-      margin-top: 10px;
-      color: #555;
+      border-left: 5px solid #FF3B3B;
+    }
+
+    .timestamp {
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+
+    .alert-icon {
+      margin-right: 10px;
+      color: #FF3B3B;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔔 Waiting for Alert...</h1>
-    <p class="timestamp"></p>
+  <div class="alert-panel">
+    <h1>Incoming Alerts</h1>
+    <ul class="alert-list" id="alertList"></ul>
   </div>
 
   <script>
     const source = new EventSource("/events");
 
     source.onmessage = function (event) {
-      const alertName = event.data || "Unknown Alert";
-      const h1 = document.querySelector("h1");
-      const timestamp = document.querySelector(".timestamp");
+      const alertText = event.data || "Unknown Alert";
+      const alertList = document.getElementById("alertList");
 
-      document.body.classList.add("blinking");
-      h1.textContent = `🚨 ALERT: ${alertName}`;
+      const li = document.createElement("li");
+      li.className = "alert-item";
+      li.innerHTML = `
+        <span><span class="alert-icon">❗</span>${alertText}</span>
+        <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+      `;
+      alertList.prepend(li);
 
-      const now = new Date();
-      timestamp.textContent = `Received at: ${now.toLocaleString()}`;
-
-      setTimeout(() => {
-        document.body.classList.remove("blinking");
-      }, 3000);
+      setTimeout(() => li.remove(), 60000); // auto-remove after 60s
     };
   </script>
 </body>
