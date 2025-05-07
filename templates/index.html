@@ -14,6 +14,15 @@
       align-items: center;
     }
 
+    body.blinking {
+      animation: blink 0.5s alternate infinite;
+    }
+
+    @keyframes blink {
+      from { background-color: #8B0000; }
+      to { background-color: #FF0000; }
+    }
+    
     .alert-panel {
       background-color: #600000;
       border-radius: 16px;
@@ -68,11 +77,15 @@
 
   <script>
     const source = new EventSource("/events");
-
+  
     source.onmessage = function (event) {
       const alertText = event.data || "Unknown Alert";
       const alertList = document.getElementById("alertList");
-
+  
+      // Add blinking effect to the body
+      document.body.classList.add("blinking");
+  
+      // Add alert item
       const li = document.createElement("li");
       li.className = "alert-item";
       li.innerHTML = `
@@ -80,9 +93,16 @@
         <span class="timestamp">${new Date().toLocaleTimeString()}</span>
       `;
       alertList.prepend(li);
-
-      setTimeout(() => li.remove(), 60000); // auto-remove after 60s
+  
+      // Stop blinking after 3 seconds
+      setTimeout(() => {
+        document.body.classList.remove("blinking");
+      }, 3000);
+  
+      // Auto-remove alert after 60 seconds
+      setTimeout(() => li.remove(), 60000);
     };
   </script>
+  
 </body>
 </html>
