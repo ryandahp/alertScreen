@@ -12,6 +12,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: background-color 0.5s, color 0.5s;
     }
 
     body.blinking {
@@ -19,8 +20,14 @@
     }
 
     @keyframes blink {
-      from { background-color: #8B0000; }
-      to { background-color: #FF0000; }
+      from { 
+        background-color: #8B0000;
+        color: white;
+      }
+      to { 
+        background-color: #FF0000;
+        color: yellow;
+      }
     }
     
     .alert-panel {
@@ -82,7 +89,7 @@
       const alertText = event.data || "Unknown Alert";
       const alertList = document.getElementById("alertList");
   
-      // Add blinking effect to the body
+      // Add blinking effect to the entire body
       document.body.classList.add("blinking");
   
       // Add alert item
@@ -103,6 +110,5 @@
       setTimeout(() => li.remove(), 60000);
     };
   </script>
-  
 </body>
 </html>
