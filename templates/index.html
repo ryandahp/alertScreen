@@ -15,7 +15,7 @@
       transition: background-color 0.5s, color 0.5s;
     }
 
-    html.blinking {
+    html.blinking, body.blinking {
       animation: blink 0.5s alternate infinite;
     }
 
@@ -91,6 +91,7 @@
   
       // Add blinking effect to the entire body
       document.documentElement.classList.add("blinking");
+      document.body.classList.add("blinking");
   
       // Add alert item
       const li = document.createElement("li");
@@ -104,6 +105,7 @@
       // Stop blinking after 3 seconds
       setTimeout(() => {
         document.documentElement.classList.remove("blinking");
+        document.body.classList.remove("blinking");
       }, 3000);
   
       // Auto-remove alert after 60 seconds
