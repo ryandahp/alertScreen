@@ -1,5 +1,8 @@
 from flask import Flask, render_template, Response, request
 import queue
+import logging
+# Set up basic logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s: %(message)s')
 
 app = Flask(__name__)
 clients = []
@@ -23,6 +26,7 @@ def events():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     data = request.get_json()
+    logging.info(f"Received webhook data: {data}")
     summary = data.get("payload", {}).get("incident", {}).get("title", "Unknown Alert")
     for q in clients:
         q.put(summary)
