@@ -27,9 +27,14 @@ def events():
 def webhook():
     data = request.get_json()
     logging.info(f"Received webhook data: {data}")
-    summary = data.get("payload", {}).get("incident", {}).get("title", "Unknown Alert")
-    for q in clients:
-        q.put(summary)
+    event_type = data.get("payload", {}).get("event_type", "")
+    if event_type == "triggered":
+        summary = data.get("payload", {}).get("incident", {}).get("title", "Unknown Alert")
+        for q in clients:
+            q.put(summary)
+    else:
+        logging.info(f"Ignored event type: {event_type}")
+        
     return "OK", 200
 
 if __name__ == '__main__':
