@@ -29,9 +29,13 @@ def webhook():
     logging.info(f"Received webhook data: {data}")
     event_type = data.get("payload", {}).get("event_type", "")
     if event_type == "triggered":
-        summary = data.get("payload", {}).get("incident", {}).get("title", "Unknown Alert")
+        incident = data.get("payload", {}).get("incident", {})
+        summary = incident.get("title", "Unknown Alert")
+        incident_number = incident.get("incident_number", "N/A")
+        message = f"#{incident_number} - {summary}"
+
         for q in clients:
-            q.put(summary)
+            q.put(message)
     else:
         logging.info(f"Ignored event type: {event_type}")
         
