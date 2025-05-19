@@ -32,7 +32,9 @@ def webhook():
         incident = data.get("payload", {}).get("incident", {})
         summary = incident.get("title", "Unknown Alert")
         incident_number = incident.get("incident_number", "N/A")
-        message = f"#{incident_number} - {summary}"
+        service_name = incident.get("service", {}).get("name", "Unknown Service")
+
+        message = f"#{incident_number} - {summary} [Service: {service_name}]"
 
         for q in clients:
             q.put(message)
